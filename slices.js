@@ -1,7 +1,7 @@
 import Color from "https://colorjs.io/color.js";
 
 let rgbspace = "sRGB"; // get from form
-let hue = 90; // get from form
+let hue = 301; // get from form
 
 let slice = [];
 let boundary = [];
@@ -11,11 +11,13 @@ let max_chroma = 0;
 
 let lightness, chroma;
 let fill;
+console.time();
+let step = .5;
 
-for (lightness = 0; lightness <=100; lightness+=0.5) {
+for (lightness = 0; lightness <=100; lightness += step) {
     edge = undefined;
 
-    for (chroma = 0; chroma <= 140; chroma+=0.5) {
+    for (chroma = 0; chroma <= 140; chroma += step) {
         let swatch = new Color("lch", [lightness, chroma, hue]);
         let rgb = swatch.to(rgbspace);
         // console.log({swatch, rgb});
@@ -30,20 +32,21 @@ for (lightness = 0; lightness <=100; lightness+=0.5) {
                 if (chroma > max_chroma) {
                     max_chroma = chroma;
                 }
-                console.log({lightness, edge});
+               // console.log({lightness, edge});
             }
         };
-        slice.push(`<rect x='${chroma - 0.25}' y='${-lightness - 0.25}' width='0.55' height='0.55' fill='${fill}' />`);
+        slice.push(`<rect x='${chroma - step/2}' y='${-lightness - step/2}' width='${1.1 * step}' height='${1.1 * step}' fill='${fill}' />`);
         // console.log ({slice});
     };
     boundary.push(`${edge}, ${-lightness} `);
 };
+console.timeEnd();
 
 let l_axis = [];
 
-for (lightness = 0; lightness <=100; lightness+=25) {
-    l_axis.push(`<text x='-2' y='${-lightness}'>${lightness}</text>`);
-}
+// for (lightness = 0; lightness <=100; lightness+=25) {
+//     l_axis.push(`<text x='-2' y='${-lightness}'>${lightness}</text>`);
+// }
 
 let markup = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -104 148 108'>
 <rect x='0' y='-100' width='140' height='100' fill='none' stroke='white'
@@ -59,6 +62,8 @@ ${slice.join('\n')}
 </svg>`;
 
 textarea.value = markup;
-output.data = `data:image/svg+xml,${encodeURIComponent(markup)}`;
+let blob = new Blob([markup], {type : "image/svg+xml"});
+downloadLink.href = output.data = URL.createObjectURL(blob);
+downloadLink.download = `slice-${hue}.svg`;
 
 window.markup = markup;
