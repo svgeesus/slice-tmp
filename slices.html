@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<title>Gamut slice explorer</title>
+<link rel="shortcut icon" href="">
+<link rel="stylesheet" href="style.css">
+
+
+</head>
+<body>
+    <h1>Chroma, Hue slices</h1>
+<output id="colorOutput"></output>
+<div class="inputs">
+    <label for="rgbspace">RGB colorspace</label>
+	<select name="space" id="rgbspace">
+        <option value="sRGB" selected>sRGB</option>
+        <option value="P3">display-p3</option>
+        <option value="rec2020">rec2020</option>
+    </select>
+    <label for="hue">Hue angle</label>
+    <input type="range" min="0" max="360" value="40" step="5">
+</div>
+
+<object data id="output"></object>
+
+<textarea id="textarea" style="width: 100%; min-height: 10em;"></textarea>
+
+<script type="module" src="slices.js" width="100%"></script>
+</body>
+</html>

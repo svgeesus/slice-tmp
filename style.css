@@ -1,0 +1,30 @@
+body {
+	background: hsl(152.32 0% 46.63%); /* lab(50% 0 0) */
+	font: 120%/1.5 Helvetica Neue, Helvetica, Segoe UI, sans-serif;
+	width: fit-content;
+	width: 80em;
+	max-width: 90vw;
+	margin: 1em auto;
+	color: white;
+}
+
+input {
+	font: inherit;
+	box-sizing: border-box;
+}
+
+.inputs input[type="text"] {
+	border: 5px solid white;
+	background: hsla(0 0% 100% / .5);
+	color: black;
+	font-size: 150%;
+	padding: 0 .2em;
+}
+
+.inputs label {
+	display: block;
+}
+
+#output {
+	margin-top: 1em;
+}
