@@ -1,4 +1,5 @@
 import Color from "https://colorjs.io/color.js";
+self.Color = Color; // for debugging
 
 let rgbspace = "sRGB"; // get from form
 let hue = 264.0585; // blue
@@ -17,15 +18,20 @@ console.time();
 let lstep = .005;
 let cstep = .001;
 
+let blue = new Color("blue");
+
 for (lightness = 0; lightness <= 1; lightness += lstep) {
     edge = undefined;
 
-    for (chroma = 0.27; chroma <= 0.35; chroma += cstep) {
+    for (chroma = 0; chroma <= 0.35; chroma += cstep) {
         let swatch = new Color("oklch", [lightness, chroma, hue]);
         let rgb = swatch.to("sRGB");
         // console.log({swatch, rgb});
-        if (rgb.inGamut("srgb")) {
-            fill = rgb.toString();  // .to("srgb");
+        let deltaE = blue.deltaE(swatch, "2000");
+        let inGamut = rgb.inGamut("srgb", {epsilon: .075});
+
+        if (inGamut) {
+            fill = rgb.toGamut({method: "clip"}).toString();  // .to("srgb");
         }
         else  {
             fill = "#777";
@@ -36,8 +42,21 @@ for (lightness = 0; lightness <= 1; lightness += lstep) {
                     max_chroma = chroma;
                 }
             }
-        };
-        slice.push(`<rect x='${400 * chroma  - 1.1 * cstep / 2}' y='${-lightness * 100 - 1.1 * lstep / 2}' width='${1.1 * cstep * 400}' height='${1.1 * lstep * 100}' fill='${fill}' />`);
+        }
+
+        let rect = `<rect
+            x='${400 * chroma  - 1.1 * cstep / 2}'
+            y='${-lightness * 100 - 1.1 * lstep / 2}'
+            width='${1.1 * cstep * 400}'
+            height='${1.1 * lstep * 100}'
+            fill='${fill}'
+            data-oklch='${swatch.coords}'
+            data-srgb='${swatch.srgb}'
+            data-deltaE='${deltaE}'
+            ${deltaE < 2? `stroke="red" stroke-width=".1"` : ""}
+        />`;
+
+        slice.push(rect);
     };
     boundary.push(`${edge * 400}, ${-lightness * 100} `);
 };
