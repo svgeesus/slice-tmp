@@ -20,6 +20,13 @@ let cstep = .001;
 
 let blue = new Color("blue");
 
+function inRGBGamut(color) {
+    // Ignore negative numbers
+    let ε_low = .1;
+    let ε_high = .0075;
+    return color.coords.every(c => c < 1 + ε_high && c > 0 - ε_low);
+}
+
 for (lightness = 0; lightness <= 1; lightness += lstep) {
     edge = undefined;
 
@@ -28,7 +35,7 @@ for (lightness = 0; lightness <= 1; lightness += lstep) {
         let rgb = swatch.to("sRGB");
         // console.log({swatch, rgb});
         let deltaE = blue.deltaE(swatch, "2000");
-        let inGamut = rgb.inGamut("srgb", {epsilon: .075});
+        let inGamut = inRGBGamut(rgb);
 
         if (inGamut) {
             fill = rgb.toGamut({method: "clip"}).toString();  // .to("srgb");
